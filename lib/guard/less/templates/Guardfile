@@ -1,0 +1,3 @@
+guard 'less' do
+  watch('(\.less)$')
+end
