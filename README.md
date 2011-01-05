@@ -18,7 +18,7 @@ Add an initial setup to your Guardfile with:
 A guard extension that compiles `.less` files to `.css` files when changed.
 
     guard 'less' do
-      watch('(\.less)$')
+      watch('(.*\.less)$')
     end
 
 #License
