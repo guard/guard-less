@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Brendan Erwin']
   s.email       = ['brendanjerwin@gmail.com']
-  s.homepage    = 'http://rubygems.org/gems/guard-less'
+  s.homepage    = 'https://github.com/guard/guard-less'
   s.summary     = 'Guard gem for Less'
   s.description = 'Guard::Less automatically compiles less (like lessc --watch)'
   
