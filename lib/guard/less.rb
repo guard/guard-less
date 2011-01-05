@@ -2,6 +2,8 @@ require 'guard'
 require 'guard/guard'
 require 'less'
 
+require File.dirname(__FILE__) + "/less/version"
+
 module Guard
   class Less < Guard
 
@@ -10,7 +12,7 @@ module Guard
     # ================
 
     def start
-      UI.info "Guard::Less #{VERSION} is on the job!\n"
+      UI.info "Guard::Less #{LessVersion::VERSION} is on the job!"
     end
 
     # Call with Ctrl-/ signal
