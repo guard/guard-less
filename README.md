@@ -1,8 +1,10 @@
 # Guard-Less
 
+A guard extension that compiles `.less` files to `.css` files when changed.
+
 ## Install
 
-You will need to have [guard](http://github.com/guard/guard) first.
+You will need to have [Guard](https://github.com/guard/guard) first.
 
 Install the gem with:
 
@@ -15,13 +17,19 @@ Add an initial setup to your Guardfile with:
 
 ## Usage
 
-A guard extension that compiles `.less` files to `.css` files when changed.
+Please read [Guard usage doc](https://github.com/guard/guard#readme).
+
+## Guardfile
+
+Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
+
+### Standard Ruby project
 
     guard 'less' do
-      watch('(.*\.less)$')
+      watch(/.*\.less$/)
     end
 
-#License
+# License
 
 **Copyright (c) 2011 Brendan Erwin**
 
