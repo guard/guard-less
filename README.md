@@ -21,11 +21,11 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 
 ## Guardfile
 
-Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
-
     guard 'less' do
       watch(/.*\.less$/)
     end
+
+Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
 
 # License
 
