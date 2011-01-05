@@ -23,8 +23,6 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 
 Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
 
-### Standard Ruby project
-
     guard 'less' do
       watch(/.*\.less$/)
     end
