@@ -10,9 +10,13 @@ module Guard
     # ================
     # = Guard method =
     # ================
+    def initialize(watchers=[], options={})
+      @all_on_start = options.delete(:all_on_start)
+    end
 
     def start
       UI.info "Guard::Less #{LessVersion::VERSION} is on the job!"
+      run_all unless @all_on_start == false
     end
 
     # Call with Ctrl-/ signal
