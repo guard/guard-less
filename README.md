@@ -21,7 +21,7 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 
 ## Guardfile
 
-    guard 'less' do
+    guard 'less', :all_on_start => true, :all_after_pass => true do
       watch(/.*\.less$/)
     end
 
