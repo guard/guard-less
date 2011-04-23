@@ -27,6 +27,11 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 
 Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
 
+## Options
+
+  :all_after_pass => false   # don't run on all files after changed files pass, default: true
+  :all_on_start => false     # don't run on all the specs at startup, default: true
+
 # License
 
 **Copyright (c) 2011 Brendan Erwin**

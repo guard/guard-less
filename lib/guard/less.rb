@@ -37,7 +37,7 @@ module Guard
 
     # Call on file(s) modifications
     def run_on_change(paths)
-      run_all if run(paths) && @all_after_pass
+      run_all if run(paths) && (@all_after_pass != false)
     end
 
     def run(paths)
