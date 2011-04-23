@@ -29,8 +29,8 @@ Please read [Guard doc](https://github.com/guard/guard#readme) for more info abo
 
 ## Options
 
-  :all_after_pass => false   # don't run on all files after changed files pass, default: true
-  :all_on_start => false     # don't run on all the specs at startup, default: true
+    :all_after_pass => false   # don't run on all files after changed files pass, default: true
+    :all_on_start => false     # don't run on all the specs at startup, default: true
 
 # License
 
