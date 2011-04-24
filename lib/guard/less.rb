@@ -12,7 +12,7 @@ module Guard
     # ================
     def initialize(watchers=[], options={})
       super
-      @all_after_pass = options.delete(:all_after_pass)
+      @all_after_change = options.delete(:all_after_change)
       @all_on_start = options.delete(:all_on_start)
     end
 
@@ -37,7 +37,7 @@ module Guard
 
     # Call on file(s) modifications
     def run_on_change(paths)
-      run_all if run(paths) && (@all_after_pass != false)
+      run_all if run(paths) && (@all_after_change != false)
     end
 
     def run(paths)

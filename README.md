@@ -21,7 +21,7 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 
 ## Guardfile
 
-    guard 'less', :all_on_start => true, :all_after_pass => true do
+    guard 'less', :all_on_start => true, :all_after_change => true do
       watch(/.*\.less$/)
     end
 
@@ -29,12 +29,12 @@ Please read [Guard doc](https://github.com/guard/guard#readme) for more info abo
 
 ## Options
 
-    :all_after_pass => false   # don't run on all files after changed files pass, default: true
-    :all_on_start => false     # don't run on all the specs at startup, default: true
+    :all_after_change => [true|false]   # run on all files after any changed files, default: true
+    :all_on_start => [true|false]     # run on all the files at startup, default: true
 
 # License
 
-**Copyright (c) 2011 Brendan Erwin**
+**Copyright (c) 2011 Brendan Erwin and contributors**
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
