@@ -46,15 +46,12 @@ module Guard
         unless File.basename(file)[0] == "_"
           UI.info "lessc - #{file}\n"
 
+          parser = ::Less::Parser.new(:paths => [File.dirname(file)])
           css = parser.parse(File.read(file)).to_css
           last_passed = !!File.open(file.sub(/\.less$/, '.css'), 'w') {|f| f << css}
         end
       end
       last_passed
-    end
-
-    def parser
-      @parser ||= Less::Parser.new
     end
 
   end
