@@ -47,15 +47,23 @@ module Guard
           css_file = file.gsub(/\.less$/,'.css')
 
           # Just in case
-          raise 'Output css file would overwrite less input file' if css_file == file
+          if css_file == file
+            UI.info "Guard::Less: Skipping #{file} since the output would overwrite the original file"
+          else
+            UI.info "Guard::Less: #{file} -> #{css_file}\n"
 
-          UI.info "Guard::Less: #{file} -> #{css_file}\n"
-
-          parser = ::Less::Parser.new :paths => ['./public/stylesheets'], :filename => file
-          File.open(file,'r') do |infile|
-            File.open(css_file,'w') do |outfile|
-              tree = parser.parse(infile.read)
-              outfile << tree.to_css
+            begin
+              parser = ::Less::Parser.new :paths => ['./public/stylesheets'], :filename => file
+              File.open(file,'r') do |infile|
+                File.open(css_file,'w') do |outfile|
+                  tree = parser.parse(infile.read)
+                  outfile << tree.to_css
+                end
+              end
+              true
+            rescue Exception => e
+              UI.info "Guard::Less: Compiling #{file} failed with message: #{e.message}"
+              false
             end
           end
         end
