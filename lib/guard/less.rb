@@ -43,7 +43,7 @@ module Guard
     def run(paths)
       last_passed = false
       paths.each do |file|
-        unless File.basename(file)[0] == "_"
+        unless File.basename(file)[0,1] == "_"
           UI.info "lessc - #{file}\n"
           last_passed = system("lessc #{file} --verbose")
         end
