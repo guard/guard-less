@@ -29,8 +29,35 @@ Please read [Guard doc](https://github.com/guard/guard#readme) for more info abo
 
 ## Options
 
-    :all_after_change => [true|false]   # run on all files after any changed files, default: true
-    :all_on_start => [true|false]     # run on all the files at startup, default: true
+```ruby
+:all_after_change => [true|false]   # run on all files after any changed files
+                                    # default: true
+
+:all_on_start => [true|false]       # run on all the files at startup
+                                    # default: true
+
+:output => 'relative/path'          # base directory for output CSS files; if unset,
+                                    # .css files are generated in the same directories
+                                    # as their corresponding .less file
+                                    # default: nil
+```
+
+### Output option
+
+By default, `.css` files will be generated in the same directories as their
+corresponding `.less` files (partials beginning with `_` are always excluded).
+To customize the output location, pass the `:output` option as described above,
+and be sure to use a match group in the regular expression in your watch to
+capture nested structure that will be preserved, i.e.
+
+```ruby
+guard 'less', :output => 'public/stylesheets' do
+  watch(%r{^app/stylesheets/(.+\.less)$})
+end
+```
+
+will result in `app/stylesheets/forums/main.less` producing CSS at
+`public/stylesheets/forums/main.css`.
 
 # License
 
