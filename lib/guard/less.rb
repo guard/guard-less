@@ -60,6 +60,8 @@ module Guard
           # Just in case
           if cssfile == lessfile
             UI.info "Guard::Less: Skipping #{lessfile} since the output would overwrite the original file"
+          elsif mtime(cssfile) >= mtime_including_imports(lessfile)
+            UI.info "Guard::Less: Skipping #{lessfile} because #{cssfile} is already up-to-date"
           else
             UI.info "Guard::Less: #{lessfile} -> #{cssfile}\n"
             FileUtils.mkdir_p(File.expand_path(destination))
@@ -111,6 +113,30 @@ module Guard
       end
 
       directories
+    end
+
+    # mtime checking borrowed from the old official LESS Rails plugin:
+    #    https://github.com/cloudhead/more
+    def mtime(file)
+      return 0 unless File.file?(file)
+      File.mtime(file).to_i
+    end
+
+    # consider imports for mtime
+    # just 1 level deep so we do not get any looping/nesting errors
+    def mtime_including_imports(file)
+      mtimes = [mtime(file)]
+      File.readlines(file).each do |line|
+        if line =~ /^\s*@import ['"]([^'"]+)/
+          imported = File.join(File.dirname(file), $1)
+          mtimes << if imported =~ /\.le?ss$/ # complete path given ?
+            mtime(imported)
+          else # we need to add .less or .lss
+            [mtime("#{imported}.less"), mtime("#{imported}.lss")].max
+          end
+        end
+      end
+      mtimes.max
     end
 
   end
