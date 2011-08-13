@@ -40,6 +40,11 @@ Please read [Guard doc](https://github.com/guard/guard#readme) for more info abo
                                     # .css files are generated in the same directories
                                     # as their corresponding .less file
                                     # default: nil
+
+:import_paths => ['lib/styles']     # an array of additional load paths to pass to the
+                                    # LESS parser, used when resolving `@import`
+                                    # statements
+                                    # default: [] (see below)
 ```
 
 ### Output option
@@ -58,6 +63,15 @@ end
 
 will result in `app/stylesheets/forums/main.less` producing CSS at
 `public/stylesheets/forums/main.css`.
+
+### Import paths option
+
+As each `.less` file is parsed, the directory containing the file is
+automatically prepended to the import paths, so imports relative to your watched
+dirs like `@import 'shared/_type-styles'` should always work. You can supply
+additional paths with this option so that, for the `['lib/styles']` example, a
+file at `lib/styles/reset.less` could be imported without a qualified path as
+`@import 'reset'`.
 
 # License
 

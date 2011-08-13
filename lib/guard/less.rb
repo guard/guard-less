@@ -14,7 +14,8 @@ module Guard
       defaults = {
         :all_after_change => true,
         :all_on_start => true,
-        :output => nil
+        :output => nil,
+        :import_paths => []
       }
 
       super(watchers, defaults.merge(options))
@@ -72,7 +73,8 @@ module Guard
 
     # Parse the source lessfile and write to target cssfile
     def compile(lessfile, cssfile)
-      parser = ::Less::Parser.new :paths => ['./public/stylesheets'], :filename => lessfile
+      import_paths = options[:import_paths].unshift(File.dirname(lessfile))
+      parser = ::Less::Parser.new :paths => import_paths, :filename => lessfile
       File.open(lessfile,'r') do |infile|
         File.open(cssfile,'w') do |outfile|
           tree = parser.parse(infile.read)
