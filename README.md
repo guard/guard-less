@@ -21,9 +21,11 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 
 ## Guardfile
 
-    guard 'less', :all_on_start => true, :all_after_change => true do
-      watch(%r{^.*\.less$})
-    end
+```ruby
+guard 'less', :all_on_start => true, :all_after_change => true do
+  watch(%r{^.*\.less$})
+end
+```
 
 Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
 
