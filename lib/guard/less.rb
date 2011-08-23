@@ -24,32 +24,50 @@ module Guard
     # Call with Ctrl-/ signal
     # This method should be principally used for long action like running all specs/tests/...
     def run_all
-       patterns = @watchers.map { |w| w.pattern }
-       files = Dir.glob('**/*.*')
-       paths = []
-       files.each do |file|
-         patterns.each do |pattern|
-           paths << file if file.match(Regexp.new(pattern))
-         end
-       end
-       run(paths)
+      UI.info "Guard::Less: compiling all files"
+      patterns = @watchers.map { |w| w.pattern }
+      files = Dir.glob('**/*.*')
+      paths = []
+      files.each do |file|
+        patterns.each do |pattern|
+          paths << file if file.match(Regexp.new(pattern))
+        end
+      end
+      run(paths)
     end
 
     # Call on file(s) modifications
     def run_on_change(paths)
-      run_all if run(paths) && (@all_after_change != false)
+      @all_after_change ? run_all : run(paths)
     end
 
     def run(paths)
-      last_passed = false
       paths.each do |file|
         unless File.basename(file)[0,1] == "_"
-          UI.info "lessc - #{file}\n"
-          last_passed = system("lessc #{file} --verbose")
+          css_file = file.gsub(/\.less$/,'.css')
+
+          # Just in case
+          if css_file == file
+            UI.info "Guard::Less: Skipping #{file} since the output would overwrite the original file"
+          else
+            UI.info "Guard::Less: #{file} -> #{css_file}\n"
+
+            begin
+              parser = ::Less::Parser.new :paths => ['./public/stylesheets'], :filename => file
+              File.open(file,'r') do |infile|
+                File.open(css_file,'w') do |outfile|
+                  tree = parser.parse(infile.read)
+                  outfile << tree.to_css
+                end
+              end
+              true
+            rescue Exception => e
+              UI.info "Guard::Less: Compiling #{file} failed with message: #{e.message}"
+              false
+            end
+          end
         end
       end
-      last_passed
     end
-
   end
 end
