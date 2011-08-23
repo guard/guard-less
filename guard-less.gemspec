@@ -16,7 +16,12 @@ Gem::Specification.new do |s|
   # s.rubyforge_project         = 'guard-less'
   
   s.add_dependency 'guard', '>= 0.2.2'
-  s.add_dependency 'less',  '~> 1.2'
+  s.add_dependency 'less',  '~> 2.0.5'
+
+  s.add_development_dependency 'bundler',     '~> 1.0'
+  s.add_development_dependency 'fakefs',      '~> 0.3'
+  s.add_development_dependency 'guard-rspec', '~> 0.4'
+  s.add_development_dependency 'rspec',       '~> 2.6'
   
   s.files        = Dir.glob('{lib}/**/*') + %w[README.md]
   s.require_path = 'lib'
