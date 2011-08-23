@@ -45,7 +45,10 @@ module Guard
       paths.each do |file|
         unless File.basename(file)[0,1] == "_"
           UI.info "lessc - #{file}\n"
-          last_passed = system("lessc #{file} --verbose")
+
+          parser = ::Less::Parser.new(:paths => [File.dirname(file)])
+          css = parser.parse(File.read(file)).to_css
+          last_passed = !!File.open(file.sub(/\.less$/, '.css'), 'w') {|f| f << css}
         end
       end
       last_passed
