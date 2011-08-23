@@ -22,15 +22,56 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 ## Guardfile
 
     guard 'less', :all_on_start => true, :all_after_change => true do
-      watch(/.*\.less$/)
+      watch(%r{^.*\.less$})
     end
 
 Please read [Guard doc](https://github.com/guard/guard#readme) for more info about Guardfile DSL.
 
 ## Options
 
-    :all_after_change => [true|false]   # run on all files after any changed files, default: true
-    :all_on_start => [true|false]     # run on all the files at startup, default: true
+```ruby
+:all_after_change => [true|false]   # run on all files after any changed files
+                                    # default: true
+
+:all_on_start => [true|false]       # run on all the files at startup
+                                    # default: true
+
+:output => 'relative/path'          # base directory for output CSS files; if unset,
+                                    # .css files are generated in the same directories
+                                    # as their corresponding .less file
+                                    # default: nil
+
+:import_paths => ['lib/styles']     # an array of additional load paths to pass to the
+                                    # LESS parser, used when resolving `@import`
+                                    # statements
+                                    # default: [] (see below)
+```
+
+### Output option
+
+By default, `.css` files will be generated in the same directories as their
+corresponding `.less` files (partials beginning with `_` are always excluded).
+To customize the output location, pass the `:output` option as described above,
+and be sure to use a match group in the regular expression in your watch to
+capture nested structure that will be preserved, i.e.
+
+```ruby
+guard 'less', :output => 'public/stylesheets' do
+  watch(%r{^app/stylesheets/(.+\.less)$})
+end
+```
+
+will result in `app/stylesheets/forums/main.less` producing CSS at
+`public/stylesheets/forums/main.css`.
+
+### Import paths option
+
+As each `.less` file is parsed, the directory containing the file is
+automatically prepended to the import paths, so imports relative to your watched
+dirs like `@import 'shared/_type-styles'` should always work. You can supply
+additional paths with this option so that, for the `['lib/styles']` example, a
+file at `lib/styles/reset.less` could be imported without a qualified path as
+`@import 'reset'`.
 
 # License
 
