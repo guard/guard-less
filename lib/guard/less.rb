@@ -15,7 +15,8 @@ module Guard
         :all_after_change => true,
         :all_on_start => true,
         :output => nil,
-        :import_paths => []
+        :import_paths => [],
+        :compress => false
       }
 
       super(watchers, defaults.merge(options))
@@ -80,7 +81,7 @@ module Guard
       File.open(lessfile,'r') do |infile|
         File.open(cssfile,'w') do |outfile|
           tree = parser.parse(infile.read)
-          outfile << tree.to_css
+          outfile << tree.to_css(:compress => options[:compress])
         end
       end
       true
