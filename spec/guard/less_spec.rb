@@ -23,6 +23,10 @@ describe Guard::Less do
       it 'sets an empty :import_paths option' do
         guard.options[:import_paths].should be_empty
       end
+
+      it 'sets false for :compress' do
+        guard.options[:compress].should be_false
+      end
     end
 
     context 'when providing options' do
@@ -31,8 +35,13 @@ describe Guard::Less do
           :all_after_change => false,
           :all_on_start => false,
           :output => 'public/stylesheets',
-          :import_paths => ['lib/styles']
+          :import_paths => ['lib/styles'],
+          :compress => true
         })
+      end
+
+      it 'sets :compress' do
+        guard.options[:compress].should be_true
       end
 
       it 'sets :all_after_change' do
@@ -226,4 +235,3 @@ LESS
     end
   end
 end
-
