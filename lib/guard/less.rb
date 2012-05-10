@@ -31,14 +31,8 @@ module Guard
     # This method should be principally used for long action like running all specs/tests/...
     def run_all
       UI.info "Guard::Less: compiling all files"
-      patterns = watchers.map { |w| w.pattern }
       files = Dir.glob('**/*.*')
-      paths = []
-      files.each do |file|
-        patterns.each do |pattern|
-          paths << file if file.match(Regexp.new(pattern))
-        end
-      end
+      paths = Watcher.match_files(self, files).uniq
       run(paths)
     end
 

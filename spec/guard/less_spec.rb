@@ -70,7 +70,18 @@ describe Guard::Less do
   end
 
   describe '.run_all' do
+    let(:watcher) { Guard::Watcher.new(%r{^yes/(.+)\.less$}) }
     let(:guard) { Guard::Less.new([watcher]) }
+
+    let(:guard_with_one_to_one_action) do
+      watcher.action = lambda {|m| "yep/#{m[1]}.less" }
+      Guard::Less.new([watcher])
+    end
+
+    let(:guard_with_many_to_one_action) do
+      watcher.action = lambda {|m| "base.less" }
+      Guard::Less.new([watcher])
+    end
 
     before do
       Dir.stub(:glob).and_return ['yes/a.less', 'yes/b.less', 'no/c.less']
@@ -79,6 +90,16 @@ describe Guard::Less do
     it 'executes .run passing all watched LESS files' do
       guard.should_receive(:run).with(['yes/a.less', 'yes/b.less'])
       guard.run_all
+    end
+
+    it 'executes .run passing all watched LESS files while observing actions provided' do
+      guard_with_one_to_one_action.should_receive(:run).with(['yep/a.less', 'yep/b.less'])
+      guard_with_one_to_one_action.run_all
+    end
+
+    it 'executes .run only once per path' do
+      guard_with_many_to_one_action.should_receive(:run).with(['base.less'])
+      guard_with_many_to_one_action.run_all
     end
   end
 
