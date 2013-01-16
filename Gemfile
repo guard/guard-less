@@ -15,3 +15,6 @@ if Config::CONFIG['target_os'] =~ /linux/i
   gem 'libnotify',  '~> 0.3.0'
 end
 
+gem 'therubyrhino', :platforms => :jruby
+gem 'therubyracer', :platforms => :ruby
+
