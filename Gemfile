@@ -8,7 +8,7 @@ require 'rbconfig'
 
 if Config::CONFIG['target_os'] =~ /darwin/i
   gem 'rb-fsevent',   '>= 0.4.0'
-  gem 'growl_notify', '~> 0.0.1'
+  gem 'growl_notify', '~> 0.0.1', :platforms => :ruby
 end
 if Config::CONFIG['target_os'] =~ /linux/i
   gem 'rb-inotify', '>= 0.8.4'
