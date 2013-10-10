@@ -1,5 +1,5 @@
 module Guard
   module LessVersion
-    VERSION = "0.1.3"
+    VERSION = '1.0.0'
   end
 end
