@@ -2,22 +2,22 @@ require 'guard'
 require 'guard/plugin'
 require 'less'
 
-require File.dirname(__FILE__) + "/less/version"
-
 module Guard
   class Less < Plugin
+
+    require 'guard/less/version'
 
     # ================
     # = Guard method =
     # ================
     def initialize(options = {})
       defaults = {
-        :all_after_change => true,
-        :all_on_start => true,
-        :output => nil,
-        :import_paths => [],
-        :compress => false,
-        :yuicompress => false,
+        all_after_change: true,
+        all_on_start: true,
+        output: nil,
+        import_paths: [],
+        compress: false,
+        yuicompress: false,
       }
 
       super(defaults.merge(options))
@@ -72,7 +72,7 @@ module Guard
     # Parse the source lessfile and write to target cssfile
     def compile(lessfile, cssfile)
       import_paths = options[:import_paths].unshift(File.dirname(lessfile))
-      parser = ::Less::Parser.new :paths => import_paths, :filename => lessfile
+      parser = ::Less::Parser.new paths: import_paths, filename: lessfile
       File.open(lessfile,'r') do |infile|
         File.open(cssfile,'w') do |outfile|
           tree = parser.parse(infile.read)

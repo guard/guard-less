@@ -1,21 +1,17 @@
+if ENV['CI']
+  require 'coveralls'
+  Coveralls.wear!
+end
+
+require 'guard/less'
 require 'rspec'
 require 'fakefs/spec_helpers'
 
-require 'guard/less'
+ENV['GUARD_ENV'] = 'test'
 
 RSpec.configure do |config|
   config.color_enabled = true
-  config.filter_run :focus => true
+  config.filter_run focus: true
   config.run_all_when_everything_filtered = true
-
-  config.before(:each) do
-    ENV["GUARD_ENV"] = 'test'
-    @project_path = Pathname.new(File.expand_path('../../', __FILE__))
-  end
-
-  config.after(:each) do
-    ENV["GUARD_ENV"] = nil
-  end
-
+  config.treat_symbols_as_metadata_keys_with_true_values = true
 end
-

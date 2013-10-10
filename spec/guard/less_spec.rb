@@ -74,12 +74,12 @@ describe Guard::Less do
     let(:guard) { Guard::Less.new(watchers: [watcher]) }
 
     let(:guard_with_one_to_one_action) do
-      watcher.action = lambda {|m| "yep/#{m[1]}.less" }
+      watcher.action = ->(m) { "yep/#{m[1]}.less" }
       Guard::Less.new(watchers: [watcher])
     end
 
     let(:guard_with_many_to_one_action) do
-      watcher.action = lambda {|m| "base.less" }
+      watcher.action = ->(m) { "base.less" }
       Guard::Less.new(watchers: [watcher])
     end
 
@@ -202,7 +202,7 @@ describe Guard::Less do
       end
 
       it 'includes directory of currently processing file in Less parser import paths' do
-        ::Less::Parser.should_receive(:new).with(:paths => ['yes'], :filename => 'yes/a.less')
+        ::Less::Parser.should_receive(:new).with(paths: ['yes'], filename: 'yes/a.less')
         guard.run(['yes/a.less'])
       end
 
@@ -212,7 +212,7 @@ describe Guard::Less do
         end
 
         it 'also includes specified import paths for Less parser' do
-          ::Less::Parser.should_receive(:new).with(:paths => ['yes', 'lib/styles'], :filename => 'yes/a.less')
+          ::Less::Parser.should_receive(:new).with(paths: ['yes', 'lib/styles'], filename: 'yes/a.less')
           guard.run(['yes/a.less'])
         end
       end
