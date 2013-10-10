@@ -76,11 +76,7 @@ module Guard
       File.open(lessfile,'r') do |infile|
         File.open(cssfile,'w') do |outfile|
           tree = parser.parse(infile.read)
-          if options[:yuicompress]
-          	outfile << tree.to_css(:yuicompress => options[:yuicompress])
-          elsif options[:compress]
-          	outfile << tree.to_css(:compress => options[:compress])
-          end
+         	outfile << tree.to_css(compress: options[:compress], yuicompress: options[:yuicompress])
         end
       end
       true
