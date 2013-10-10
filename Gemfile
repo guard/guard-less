@@ -14,6 +14,7 @@ end
 #
 group :test do
   gem 'rspec'
+  gem 'fakefs'
   gem 'coveralls', require: false
 end
 
