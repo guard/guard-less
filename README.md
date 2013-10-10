@@ -1,6 +1,11 @@
-# Guard-Less
+# Guard::Less
+
+[![Gem Version](https://badge.fury.io/rb/guard-less.png)](http://badge.fury.io/rb/guard-less) [![Build Status](https://travis-ci.org/guard/guard-less.png?branch=master)](https://travis-ci.org/guard/guard-less) [![Dependency Status](https://gemnasium.com/guard/guard-less.png)](https://gemnasium.com/guard/guard-less) [![Code Climate](https://codeclimate.com/github/guard/guard-less.png)](https://codeclimate.com/github/guard/guard-less) [![Coverage Status](https://coveralls.io/repos/guard/guard-less/badge.png?branch=master)](https://coveralls.io/r/guard/guard-less)
 
 A guard extension that compiles `.less` files to `.css` files when changed.
+
+* Compatible with Less ~> 2.3.
+* Tested against Ruby 1.9.3, 2.0.0, Rubinius & JRuby (1.9 mode only).
 
 ## Install
 
@@ -8,12 +13,15 @@ You will need to have [Guard](https://github.com/guard/guard) first.
 
 Install the gem with:
 
-    gem install guard-less
+```bash
+gem install guard-less
+```
 
 Add an initial setup to your Guardfile with:
 
-    guard init less
-
+```bash
+guard init less
+```
 
 ## Usage
 
@@ -22,8 +30,8 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 ## Guardfile
 
 ```ruby
-guard 'less', :all_on_start => true, :all_after_change => true do
-  watch(%r{^.*\.less$})
+guard :less, all_on_start: true, all_after_change: true do
+  watch %r{^.*\.less$}
 end
 ```
 
@@ -32,21 +40,25 @@ Please read [Guard doc](https://github.com/guard/guard#readme) for more info abo
 ## Options
 
 ```ruby
-:all_after_change => [true|false]   # run on all files after any changed files
+all_after_change: [true|false]   # run on all files after any changed files
                                     # default: true
 
-:all_on_start => [true|false]       # run on all the files at startup
+all_on_start: [true|false]       # run on all the files at startup
                                     # default: true
 
-:output => 'relative/path'          # base directory for output CSS files; if unset,
+output: 'relative/path'          # base directory for output CSS files; if unset,
                                     # .css files are generated in the same directories
                                     # as their corresponding .less file
                                     # default: nil
 
-:import_paths => ['lib/styles']     # an array of additional load paths to pass to the
-                                    # LESS parser, used when resolving `@import`
-                                    # statements
-                                    # default: [] (see below)
+import_paths: ['lib/styles']     # an array of additional load paths to pass to the
+                                 # LESS parser, used when resolving `@import`
+                                 # statements
+                                 # default: [] (see below)
+
+compress: true                   # minify output
+
+yuicompress: true                # minify output using yui
 ```
 
 ### Output option
@@ -58,8 +70,8 @@ and be sure to use a match group in the regular expression in your watch to
 capture nested structure that will be preserved, i.e.
 
 ```ruby
-guard 'less', :output => 'public/stylesheets' do
-  watch(%r{^app/stylesheets/(.+\.less)$})
+guard :less, output: 'public/stylesheets' do
+  watch %r{^app/stylesheets/(.+\.less)$}
 end
 ```
 
@@ -75,25 +87,14 @@ additional paths with this option so that, for the `['lib/styles']` example, a
 file at `lib/styles/reset.less` could be imported without a qualified path as
 `@import 'reset'`.
 
-# License
+## Author
 
-**Copyright (c) 2011 Brendan Erwin and contributors**
+[Brendan Erwin](https://github.com/brendanjerwin) ([@brendanjerwin](http://twitter.com/brendanjerwin), [brendanjerwin.com](http://brendanjerwin.com))
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+## Maintainer
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+[Rémy Coutable](https://github.com/rymai) ([@rymai](http://twitter.com/rymai), [rym.ai](http://rym.ai))
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+## Contributors
+
+[https://github.com/guard/guard-less/graphs/contributors](https://github.com/guard/guard-less/graphs/contributors)
