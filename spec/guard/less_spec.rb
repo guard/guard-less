@@ -31,13 +31,13 @@ describe Guard::Less do
 
     context 'when providing options' do
       let(:guard) do
-        Guard::Less.new(nil, {
-          :all_after_change => false,
-          :all_on_start => false,
-          :output => 'public/stylesheets',
-          :import_paths => ['lib/styles'],
-          :compress => true
-        })
+        Guard::Less.new(
+          all_after_change: false,
+          all_on_start: false,
+          output: 'public/stylesheets',
+          import_paths: ['lib/styles'],
+          compress: true
+        )
       end
 
       it 'sets :compress' do
@@ -71,16 +71,16 @@ describe Guard::Less do
 
   describe '.run_all' do
     let(:watcher) { Guard::Watcher.new(%r{^yes/(.+)\.less$}) }
-    let(:guard) { Guard::Less.new([watcher]) }
+    let(:guard) { Guard::Less.new(watchers: [watcher]) }
 
     let(:guard_with_one_to_one_action) do
       watcher.action = lambda {|m| "yep/#{m[1]}.less" }
-      Guard::Less.new([watcher])
+      Guard::Less.new(watchers: [watcher])
     end
 
     let(:guard_with_many_to_one_action) do
       watcher.action = lambda {|m| "base.less" }
-      Guard::Less.new([watcher])
+      Guard::Less.new(watchers: [watcher])
     end
 
     before do
@@ -105,21 +105,21 @@ describe Guard::Less do
 
   describe '.run_on_change' do
     it 'executes .run_all if :all_after_change is true' do
-      guard = Guard::Less.new(nil, :all_after_change => true)
+      guard = Guard::Less.new(all_after_change: true)
       guard.should_receive(:run_all)
-      guard.run_on_change([])
+      guard.run_on_changes([])
     end
 
     it 'executes .run passing the watched files if :all_after_change is false' do
-      guard = Guard::Less.new(nil, :all_after_change => false)
+      guard = Guard::Less.new(all_after_change: false)
       files = ['a.less', 'b.less']
       guard.should_receive(:run).with(files)
-      guard.run_on_change(files)
+      guard.run_on_changes(files)
     end
   end
 
   describe 'run' do
-    let(:guard) { Guard::Less.new([watcher]) }
+    let(:guard) { Guard::Less.new(watchers: [watcher]) }
 
     it 'does not compile otherwise matching _partials' do
       guard.should_not_receive(:compile)
@@ -127,7 +127,7 @@ describe Guard::Less do
     end
 
     context 'if watcher misconfigured to match CSS' do
-      let(:guard) { Guard::Less.new([Guard::Watcher.new('^yes/.+\.css$')], :output => nil) }
+      let(:guard) { Guard::Less.new(watchers: [Guard::Watcher.new(%r{^yes/.+\.css$})], output: nil) }
 
       it 'does not overwrite CSS' do
         guard.should_not_receive(:compile)
@@ -208,7 +208,7 @@ describe Guard::Less do
 
       context 'using :import_paths option' do
         let(:guard) do
-          Guard::Less.new([watcher], :import_paths => ['lib/styles'])
+          Guard::Less.new(watchers: [watcher], import_paths: ['lib/styles'])
         end
 
         it 'also includes specified import paths for Less parser' do
@@ -220,7 +220,7 @@ describe Guard::Less do
       context 'using :output option with custom directory' do
         let(:watcher) { Guard::Watcher.new(%r{^yes/(.+\.less)$}) }
         let(:guard) do
-          Guard::Less.new([watcher], :output => 'public/stylesheets')
+          Guard::Less.new(watchers: [watcher], output: 'public/stylesheets')
         end
 
         it 'creates directories as needed to match source hierarchy' do

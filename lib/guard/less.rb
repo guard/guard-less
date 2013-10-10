@@ -1,16 +1,16 @@
 require 'guard'
-require 'guard/guard'
+require 'guard/plugin'
 require 'less'
 
 require File.dirname(__FILE__) + "/less/version"
 
 module Guard
-  class Less < Guard
+  class Less < Plugin
 
     # ================
     # = Guard method =
     # ================
-    def initialize(watchers=[], options={})
+    def initialize(options = {})
       defaults = {
         :all_after_change => true,
         :all_on_start => true,
@@ -20,7 +20,7 @@ module Guard
         :yuicompress => false,
       }
 
-      super(watchers, defaults.merge(options))
+      super(defaults.merge(options))
     end
 
     def start
@@ -38,7 +38,7 @@ module Guard
     end
 
     # Call on file(s) modifications
-    def run_on_change(paths)
+    def run_on_changes(paths)
       options[:all_after_change] ? run_all : run(paths)
     end
 
