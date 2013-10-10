@@ -1,19 +1,21 @@
-source "http://rubygems.org"
+source 'https://rubygems.org'
 
 gemspec
 
 gem 'rake'
 
-require 'rbconfig'
-
-if Config::CONFIG['target_os'] =~ /darwin/i
-  gem 'rb-fsevent',   '>= 0.4.0'
-  gem 'growl_notify', '~> 0.0.1'
-end
-if Config::CONFIG['target_os'] =~ /linux/i
-  gem 'rb-inotify', '>= 0.8.4'
-  gem 'libnotify',  '~> 0.3.0'
+group :development do
+  gem 'ruby_gntp'
+  gem 'guard-rspec'
 end
 
-gem 'therubyrhino', :platforms => :jruby
-gem 'therubyracer', :platforms => :ruby
+# The test group will be
+# installed on Travis CI
+#
+group :test do
+  gem 'rspec'
+  gem 'coveralls', require: false
+end
+
+gem 'therubyrhino', platforms: :jruby
+gem 'therubyracer', platforms: :ruby

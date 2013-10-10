@@ -1,3 +1,8 @@
+pkg/*
 *.gem
-Gemfile.lock
+.bundle
 .DS_Store
+.rvmrc
+.rbx/*
+Gemfile.lock
+coverage/
