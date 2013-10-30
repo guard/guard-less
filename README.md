@@ -93,7 +93,7 @@ file at `lib/styles/reset.less` could be imported without a qualified path as
 
 ## Maintainer
 
-[Rémy Coutable](https://github.com/rymai) ([@rymai](http://twitter.com/rymai), [rym.ai](http://rym.ai))
+[Rémy Coutable](https://github.com/rymai)
 
 ## Contributors
 
