@@ -9,11 +9,11 @@ describe Guard::Less do
   describe '#initialize' do
     context 'when no options are provided' do
       it 'enables :all_after_change option' do
-        guard.options[:all_after_change].should be_true
+        guard.options[:all_after_change].should be_truthy
       end
 
       it 'enables :all_on_start option' do
-        guard.options[:all_on_start].should be_true
+        guard.options[:all_on_start].should be_truthy
       end
 
       it 'sets no :ouput option' do
@@ -25,7 +25,7 @@ describe Guard::Less do
       end
 
       it 'sets false for :compress' do
-        guard.options[:compress].should be_false
+        guard.options[:compress].should be_falsey
       end
     end
 
@@ -41,15 +41,15 @@ describe Guard::Less do
       end
 
       it 'sets :compress' do
-        guard.options[:compress].should be_true
+        guard.options[:compress].should be_truthy
       end
 
       it 'sets :all_after_change' do
-        guard.options[:all_after_change].should be_false
+        guard.options[:all_after_change].should be_falsey
       end
 
       it 'sets :all_on_start' do
-        guard.options[:all_on_start].should be_false
+        guard.options[:all_on_start].should be_falsey
       end
 
       it 'sets :output' do
