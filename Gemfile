@@ -7,13 +7,14 @@ gem 'rake'
 group :development do
   gem 'ruby_gntp'
   gem 'guard-rspec'
+  gem 'bundler'
 end
 
 # The test group will be
 # installed on Travis CI
 #
 group :test do
-  gem 'rspec'
+  gem 'rspec', "~> 2.99"
   gem 'fakefs'
   gem 'coveralls', require: false
 end
