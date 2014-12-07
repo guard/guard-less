@@ -23,6 +23,8 @@ Add an initial setup to your Guardfile with:
 guard init less
 ```
 
+Please note that you also have to install therubyracer (or therubyrhino when you are running JRuby).
+
 ## Usage
 
 Please read [Guard usage doc](https://github.com/guard/guard#readme).
