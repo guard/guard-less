@@ -154,7 +154,7 @@ describe Guard::Less do
 
       context 'but LESS file has an import more recently modified than CSS' do
         before do
-          write_stub_less_file('yes/a.less', import=true)
+          write_stub_less_file('yes/a.less', import: true)
           # touch with :mtime option doesn't seem to work?
           FileUtils.touch(['yes/a.css', 'yes/b.less'])
           File.utime(Time.now - 5, Time.now - 5, 'yes/a.less')
@@ -241,7 +241,7 @@ describe Guard::Less do
     guard.stub(:mtime_including_imports).and_return(Time.now)
   end
 
-  def write_stub_less_file(path, import=false)
+  def write_stub_less_file(path, import: false)
     FileUtils.mkdir_p(File.dirname(path))
     File.open(path, 'w') do |out|
       out.puts <<LESS
