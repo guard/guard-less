@@ -1,5 +1,4 @@
-require 'guard'
-require 'guard/plugin'
+require 'guard/compat/plugin'
 require 'less'
 
 module Guard
@@ -20,16 +19,16 @@ module Guard
     end
 
     def start
-      UI.info "Guard::Less #{LessVersion::VERSION} is on the job!"
+      Compat::UI.info "Guard::Less #{LessVersion::VERSION} is on the job!"
       run_all if options[:all_on_start]
     end
 
     # Call with Ctrl-/ signal
     # This method should be principally used for long action like running all specs/tests/...
     def run_all
-      UI.info 'Guard::Less: compiling all files'
+      Compat::UI.info 'Guard::Less: compiling all files'
       files = Dir.glob('**/*.*')
-      paths = Watcher.match_files(self, files).uniq
+      paths = Compat.matching_files(self, files).uniq
       run(paths)
     end
 
@@ -51,11 +50,11 @@ module Guard
 
           # Just in case
           if cssfile == lessfile
-            UI.info "Guard::Less: Skipping #{lessfile} since the output would overwrite the original file"
+            Compat::UI.info "Guard::Less: Skipping #{lessfile} since output and source are the same"
           elsif mtime(cssfile) >= mtime_including_imports(lessfile)
-            UI.info "Guard::Less: Skipping #{lessfile} because #{cssfile} is already up-to-date"
+            Compat::UI.info "Guard::Less: Skipping #{lessfile} because #{cssfile} is already up-to-date"
           else
-            UI.info "Guard::Less: #{lessfile} -> #{cssfile}\n"
+            Compat::UI.info "Guard::Less: #{lessfile} -> #{cssfile}\n"
             FileUtils.mkdir_p(File.expand_path(destination))
             compile(lessfile, cssfile)
           end
@@ -77,7 +76,7 @@ module Guard
       end
       true
     rescue StandardError => e
-      UI.info "Guard::Less: Compiling #{lessfile} failed with message: #{e.message}"
+      Compat::UI.info "Guard::Less: Compiling #{lessfile} failed with message: #{e.message}"
       false
     end
 

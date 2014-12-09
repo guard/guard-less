@@ -5,9 +5,9 @@ gemspec
 gem 'rake'
 
 group :development do
-  gem 'ruby_gntp'
-  gem 'guard-rspec'
-  gem 'guard-rubocop'
+  gem 'ruby_gntp', require: false
+  gem 'guard-rspec', require: false
+  gem 'guard-rubocop', require: false
 end
 
 # The test group will be

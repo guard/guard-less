@@ -1,5 +1,7 @@
 require 'guard/less'
 
+require 'guard/compat/test/helper'
+
 RSpec.describe Guard::Less do
   include FakeFS::SpecHelpers
 
@@ -8,7 +10,7 @@ RSpec.describe Guard::Less do
   subject { described_class.new(options) }
 
   before do
-    allow(Guard::UI).to receive(:info)
+    allow(Guard::Compat::UI).to receive(:info)
   end
 
   describe '#initialize' do
@@ -62,21 +64,21 @@ RSpec.describe Guard::Less do
     end
 
     it 'executes .run passing all watched LESS files' do
-      allow(Guard::Watcher).to receive(:match_files).and_return(['yes/a.less', 'yes/b.less'])
+      allow(Guard::Compat).to receive(:matching_files).and_return(['yes/a.less', 'yes/b.less'])
       expect(subject).to receive(:run).with(['yes/a.less', 'yes/b.less'])
       subject.run_all
     end
 
     context 'with a subpath' do
       it 'executes .run passing all watched LESS files while observing actions provided' do
-        allow(Guard::Watcher).to receive(:match_files).and_return(['yep/a.less', 'yep/b.less'])
+        allow(Guard::Compat).to receive(:matching_files).and_return(['yep/a.less', 'yep/b.less'])
         expect(subject).to receive(:run).with(['yep/a.less', 'yep/b.less'])
         subject.run_all
       end
     end
 
     it 'executes .run only once per path' do
-      allow(Guard::Watcher).to receive(:match_files).and_return(['base.less'])
+      allow(Guard::Compat).to receive(:matching_files).and_return(['base.less'])
       expect(subject).to receive(:run).with(['base.less'])
       subject.run_all
     end
@@ -112,7 +114,7 @@ RSpec.describe Guard::Less do
 
       it 'does not overwrite CSS' do
         expect(subject).not_to receive(:compile)
-        expect(Guard::UI).to receive(:info).with(/output would overwrite the original/)
+        expect(Guard::Compat::UI).to receive(:info).with(/since output and source are the same/)
         subject.run(['yes/a.css'])
       end
     end
@@ -129,7 +131,7 @@ RSpec.describe Guard::Less do
       end
 
       it 'informs user of up-to-date skipped files' do
-        expect(Guard::UI).to receive(:info).with(/yes\/a.css is already up-to-date/)
+        expect(Guard::Compat::UI).to receive(:info).with(/yes\/a.css is already up-to-date/)
         subject.run(['yes/a.less'])
       end
 
@@ -162,7 +164,7 @@ RSpec.describe Guard::Less do
       end
 
       it 'informs user of compiled files' do
-        expect(Guard::UI).to receive(:info).with(%r{yes/a.less -> yes/a.css})
+        expect(Guard::Compat::UI).to receive(:info).with(%r{yes/a.less -> yes/a.css})
         subject.run(['yes/a.less'])
       end
     end
