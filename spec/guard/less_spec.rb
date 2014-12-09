@@ -1,4 +1,4 @@
-require "guard/less"
+require 'guard/less'
 
 RSpec.describe Guard::Less do
   include FakeFS::SpecHelpers
@@ -6,7 +6,7 @@ RSpec.describe Guard::Less do
   let(:options) { {} }
   subject { described_class.new(options) }
 
-  let(:watcher) { Guard::Watcher.new(%r{^yes/.+\.less$}) }
+  let(:watcher) { Guard::Watcher.new(/^yes\/.+\.less$/) }
 
   before do
     allow(Guard::UI).to receive(:info)
@@ -52,7 +52,7 @@ RSpec.describe Guard::Less do
   end
 
   describe '.run_all' do
-    let(:watcher) { Guard::Watcher.new(%r{^yes/(.+)\.less$}) }
+    let(:watcher) { Guard::Watcher.new(/^yes\/(.+)\.less$/) }
     let(:options) { { watchers: [watcher] } }
 
     before do
@@ -72,7 +72,7 @@ RSpec.describe Guard::Less do
     end
 
     it 'executes .run only once per path' do
-      watcher.action = ->(m) { "base.less" }
+      watcher.action = ->(_m) { 'base.less' }
       guard = Guard::Less.new(watchers: [watcher])
       expect(guard).to receive(:run).with(['base.less'])
       guard.run_all
@@ -107,7 +107,7 @@ RSpec.describe Guard::Less do
     end
 
     context 'if watcher misconfigured to match CSS' do
-      let(:options) { { watchers: [Guard::Watcher.new(%r{^yes/.+\.css$})], output: nil } }
+      let(:options) { { watchers: [Guard::Watcher.new(/^yes\/.+\.css$/)], output: nil } }
 
       it 'does not overwrite CSS' do
         expect(subject).not_to receive(:compile)
@@ -161,7 +161,7 @@ RSpec.describe Guard::Less do
       end
 
       it 'informs user of compiled files' do
-        expect(Guard::UI).to receive(:info).with(/yes\/a.less -> yes\/a.css/)
+        expect(Guard::UI).to receive(:info).with(%r{yes/a.less -> yes/a.css})
         subject.run(['yes/a.less'])
       end
     end
@@ -191,7 +191,7 @@ RSpec.describe Guard::Less do
       end
 
       context 'using :import_paths option' do
-        let(:options) { { watchers: [watcher], import_paths: ['lib/styles']} }
+        let(:options) { { watchers: [watcher], import_paths: ['lib/styles'] } }
 
         it 'also includes specified import paths for Less parser' do
           expect(::Less::Parser).to receive(:new).with(paths: ['yes', 'lib/styles'], filename: 'yes/a.less')
@@ -200,7 +200,7 @@ RSpec.describe Guard::Less do
       end
 
       context 'using :output option with custom directory' do
-        let(:watcher) { Guard::Watcher.new(%r{^yes/(.+\.less)$}) }
+        let(:watcher) { Guard::Watcher.new(/^yes\/(.+\.less)$/) }
         let(:options) { { watchers: [watcher], output: 'public/stylesheets' } }
 
         it 'creates directories as needed to match source hierarchy' do
@@ -215,7 +215,7 @@ RSpec.describe Guard::Less do
 
   private
 
-  def write_stub_less_file(path, import=false)
+  def write_stub_less_file(path, import = false)
     FileUtils.mkdir_p(File.dirname(path))
     File.open(path, 'w') do |out|
       out.puts <<LESS

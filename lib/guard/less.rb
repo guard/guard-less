@@ -4,7 +4,6 @@ require 'less'
 
 module Guard
   class Less < Plugin
-
     require 'guard/less/version'
 
     # ================
@@ -17,7 +16,7 @@ module Guard
         output: nil,
         import_paths: [],
         compress: false,
-        yuicompress: false,
+        yuicompress: false
       }
 
       super(defaults.merge(options))
@@ -31,7 +30,7 @@ module Guard
     # Call with Ctrl-/ signal
     # This method should be principally used for long action like running all specs/tests/...
     def run_all
-      UI.info "Guard::Less: compiling all files"
+      UI.info 'Guard::Less: compiling all files'
       files = Dir.glob('**/*.*')
       paths = Watcher.match_files(self, files).uniq
       run(paths)
@@ -49,7 +48,7 @@ module Guard
         stylesheets.each do |lessfile|
           # Skip partials
           basename = File.basename(lessfile)
-          next if basename[0,1] == "_"
+          next if basename[0, 1] == '_'
 
           cssfile = File.join(destination, basename.gsub(/\.less$/, '.css'))
 
@@ -73,14 +72,14 @@ module Guard
     def compile(lessfile, cssfile)
       import_paths = options[:import_paths].unshift(File.dirname(lessfile))
       parser = ::Less::Parser.new paths: import_paths, filename: lessfile
-      File.open(lessfile,'r') do |infile|
-        File.open(cssfile,'w') do |outfile|
+      File.open(lessfile, 'r') do |infile|
+        File.open(cssfile, 'w') do |outfile|
           tree = parser.parse(infile.read)
-         	outfile << tree.to_css(compress: options[:compress], yuicompress: options[:yuicompress])
+          outfile << tree.to_css(compress: options[:compress], yuicompress: options[:yuicompress])
         end
       end
       true
-    rescue Exception => e
+    rescue StandardError => e
       UI.info "Guard::Less: Compiling #{lessfile} failed with message: #{e.message}"
       false
     end
@@ -94,18 +93,14 @@ module Guard
       directories = {}
 
       watchers.product(paths).each do |watcher, path|
-        if matches = path.match(watcher.pattern)
-          target = options[:output] || File.dirname(path)
-          if subpath = matches[1]
-            target = File.join(target, File.dirname(subpath)).gsub(/\/\.$/, '')
-          end
+        next unless (matches = path.match(watcher.pattern))
 
-          if directories[target]
-            directories[target] << path
-          else
-            directories[target] = [path]
-          end
+        target = options[:output] || File.dirname(path)
+        if (subpath = matches[1])
+          target = File.join(target, File.dirname(subpath)).gsub(/\/\.$/, '')
         end
+
+        (directories[target] ||= []) << path
       end
 
       directories
@@ -123,17 +118,20 @@ module Guard
     def mtime_including_imports(file)
       mtimes = [mtime(file)]
       File.readlines(file).each do |line|
-        if line =~ /^\s*@import ['"]([^'"]+)/
-          imported = File.join(File.dirname(file), $1)
-          mtimes << if imported =~ /\.le?ss$/ # complete path given ?
-            mtime(imported)
-          else # we need to add .less or .lss
-            [mtime("#{imported}.less"), mtime("#{imported}.lss")].max
-          end
-        end
+        next unless line =~ /^\s*@import ['"]([^'"]+)/
+
+        imported = File.join(File.dirname(file), Regexp.last_match[1])
+
+        # complete path given ?
+        mod_time = if imported =~ /\.le?ss$/
+                     mtime(imported)
+                   else
+                     # we need to add .less or .lss
+                     [mtime("#{imported}.less"), mtime("#{imported}.lss")].max
+                   end
+        mtimes << mod_time
       end
       mtimes.max
     end
-
   end
 end
