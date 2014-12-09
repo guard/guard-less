@@ -1,11 +1,11 @@
 require "guard/less"
 
-require 'fakefs/spec_helpers'
-
 RSpec.describe Guard::Less do
   include FakeFS::SpecHelpers
 
-  let(:guard) { Guard::Less.new }
+  let(:options) { {} }
+  subject { described_class.new(options) }
+
   let(:watcher) { Guard::Watcher.new(%r{^yes/.+\.less$}) }
 
   before do
@@ -13,132 +13,106 @@ RSpec.describe Guard::Less do
   end
 
   describe '#initialize' do
-    context 'when no options are provided' do
-      it 'enables :all_after_change option' do
-        expect(guard.options[:all_after_change]).to be_truthy
+    describe 'options' do
+      subject { described_class.new(options).options }
+
+      context 'when none provided' do
+        it { is_expected.to include(all_after_change: true) }
+        it { is_expected.to include(all_on_start: true) }
+        it { is_expected.to include(output: nil) }
+        it { is_expected.to include(import_paths: []) }
+        it { is_expected.to include(compress: false) }
       end
 
-      it 'enables :all_on_start option' do
-        expect(guard.options[:all_on_start]).to be_truthy
-      end
+      context 'when provided' do
+        let(:options) do
+          {
+            all_after_change: false,
+            all_on_start: false,
+            output: 'public/stylesheets',
+            import_paths: ['lib/styles'],
+            compress: true
+          }
+        end
 
-      it 'sets no :ouput option' do
-        expect(guard.options[:output]).to be_nil
-      end
-
-      it 'sets an empty :import_paths option' do
-        expect(guard.options[:import_paths]).to be_empty
-      end
-
-      it 'sets false for :compress' do
-        expect(guard.options[:compress]).to be_falsey
-      end
-    end
-
-    context 'when providing options' do
-      let(:guard) do
-        Guard::Less.new(
-          all_after_change: false,
-          all_on_start: false,
-          output: 'public/stylesheets',
-          import_paths: ['lib/styles'],
-          compress: true
-        )
-      end
-
-      it 'sets :compress' do
-        expect(guard.options[:compress]).to be_truthy
-      end
-
-      it 'sets :all_after_change' do
-        expect(guard.options[:all_after_change]).to be_falsey
-      end
-
-      it 'sets :all_on_start' do
-        expect(guard.options[:all_on_start]).to be_falsey
-      end
-
-      it 'sets :output' do
-        expect(guard.options[:output]).to eql 'public/stylesheets'
-      end
-
-      it 'sets :import_paths' do
-        expect(guard.options[:import_paths]).to eql ['lib/styles']
+        it { is_expected.to include(compress: true) }
+        it { is_expected.to include(all_after_change: false) }
+        it { is_expected.to include(all_on_start: false) }
+        it { is_expected.to include(output: 'public/stylesheets') }
+        it { is_expected.to include(import_paths: ['lib/styles']) }
       end
     end
   end
 
   describe '.start' do
     it 'executes run_all if :all_on_start is true' do
-      expect(guard).to receive(:run_all)
-      guard.start
+      expect(subject).to receive(:run_all)
+      subject.start
     end
   end
 
   describe '.run_all' do
     let(:watcher) { Guard::Watcher.new(%r{^yes/(.+)\.less$}) }
-    let(:guard) { Guard::Less.new(watchers: [watcher]) }
-
-    let(:guard_with_one_to_one_action) do
-      watcher.action = ->(m) { "yep/#{m[1]}.less" }
-      Guard::Less.new(watchers: [watcher])
-    end
-
-    let(:guard_with_many_to_one_action) do
-      watcher.action = ->(m) { "base.less" }
-      Guard::Less.new(watchers: [watcher])
-    end
+    let(:options) { { watchers: [watcher] } }
 
     before do
       allow(Dir).to receive(:glob).and_return ['yes/a.less', 'yes/b.less', 'no/c.less']
     end
 
     it 'executes .run passing all watched LESS files' do
-      expect(guard).to receive(:run).with(['yes/a.less', 'yes/b.less'])
-      guard.run_all
+      expect(subject).to receive(:run).with(['yes/a.less', 'yes/b.less'])
+      subject.run_all
     end
 
     it 'executes .run passing all watched LESS files while observing actions provided' do
-      expect(guard_with_one_to_one_action).to receive(:run).with(['yep/a.less', 'yep/b.less'])
-      guard_with_one_to_one_action.run_all
+      watcher.action = ->(m) { "yep/#{m[1]}.less" }
+      guard = Guard::Less.new(watchers: [watcher])
+      expect(guard).to receive(:run).with(['yep/a.less', 'yep/b.less'])
+      guard.run_all
     end
 
     it 'executes .run only once per path' do
-      expect(guard_with_many_to_one_action).to receive(:run).with(['base.less'])
-      guard_with_many_to_one_action.run_all
+      watcher.action = ->(m) { "base.less" }
+      guard = Guard::Less.new(watchers: [watcher])
+      expect(guard).to receive(:run).with(['base.less'])
+      guard.run_all
     end
   end
 
   describe '.run_on_change' do
-    it 'executes .run_all if :all_after_change is true' do
-      guard = Guard::Less.new(all_after_change: true)
-      expect(guard).to receive(:run_all)
-      guard.run_on_changes([])
+    context 'with :all_after_change true' do
+      let(:options) { { all_after_change: true } }
+      it 'executes .run_all if :all_after_change is true' do
+        expect(subject).to receive(:run_all)
+        subject.run_on_changes([])
+      end
     end
 
-    it 'executes .run passing the watched files if :all_after_change is false' do
-      guard = Guard::Less.new(all_after_change: false)
-      files = ['a.less', 'b.less']
-      expect(guard).to receive(:run).with(files)
-      guard.run_on_changes(files)
+    context 'with :all_after_change false' do
+      let(:options) { { all_after_change: false } }
+      it 'executes .run passing the watched files' do
+        files = ['a.less', 'b.less']
+        expect(subject).to receive(:run).with(files)
+        subject.run_on_changes(files)
+      end
     end
   end
 
   describe 'run' do
-    let(:guard) { Guard::Less.new(watchers: [watcher]) }
+    let(:options) { { watchers: [watcher] } }
 
     it 'does not compile otherwise matching _partials' do
-      expect(guard).not_to receive(:compile)
-      guard.run(['yes/_partial.less'])
+      expect(subject).not_to receive(:compile)
+      subject.run(['yes/_partial.less'])
     end
 
     context 'if watcher misconfigured to match CSS' do
-      let(:guard) { Guard::Less.new(watchers: [Guard::Watcher.new(%r{^yes/.+\.css$})], output: nil) }
+      let(:options) { { watchers: [Guard::Watcher.new(%r{^yes/.+\.css$})], output: nil } }
 
       it 'does not overwrite CSS' do
-        expect(guard).not_to receive(:compile)
-        expect(::Guard::UI).to receive(:info).with(/output would overwrite the original/)
-        guard.run(['yes/a.css'])
+        expect(subject).not_to receive(:compile)
+        expect(Guard::UI).to receive(:info).with(/output would overwrite the original/)
+        subject.run(['yes/a.css'])
       end
     end
 
@@ -149,13 +123,13 @@ RSpec.describe Guard::Less do
       end
 
       it 'does not compile' do
-        expect(guard).not_to receive(:compile)
-        guard.run(['yes/a.less'])
+        expect(subject).not_to receive(:compile)
+        subject.run(['yes/a.less'])
       end
 
       it 'informs user of up-to-date skipped files' do
-        expect(::Guard::UI).to receive(:info).with(/yes\/a.css is already up-to-date/)
-        guard.run(['yes/a.less'])
+        expect(Guard::UI).to receive(:info).with(/yes\/a.css is already up-to-date/)
+        subject.run(['yes/a.less'])
       end
 
       context 'but LESS file has an import more recently modified than CSS' do
@@ -168,84 +142,78 @@ RSpec.describe Guard::Less do
         end
 
         it 'compiles the importing LESS file' do
-          expect(guard).to receive(:compile)
-          guard.run(['yes/a.less'])
+          expect(subject).to receive(:compile)
+          subject.run(['yes/a.less'])
         end
       end
     end
 
     context 'when CSS is out of date' do
       before do
-        stub_compilation_needed
-        allow(guard).to receive(:compile)
+        allow(subject).to receive(:mtime).and_return(Time.now - 1)
+        allow(subject).to receive(:mtime_including_imports).and_return(Time.now)
+        allow(subject).to receive(:compile)
       end
 
       it 'compiles matching watched files' do
-        expect(guard).to receive(:compile).twice
-        guard.run(['yes/a.less', 'no/a.less', 'yes/b.less'])
+        expect(subject).to receive(:compile).twice
+        subject.run(['yes/a.less', 'no/a.less', 'yes/b.less'])
       end
 
       it 'informs user of compiled files' do
-        expect(::Guard::UI).to receive(:info).with(/yes\/a.less -> yes\/a.css/)
-        guard.run(['yes/a.less'])
+        expect(Guard::UI).to receive(:info).with(/yes\/a.less -> yes\/a.css/)
+        subject.run(['yes/a.less'])
       end
     end
 
     context 'when compiling' do
-      before { stub_compilation_needed }
+      before do
+        allow(subject).to receive(:mtime).and_return(Time.now - 1)
+        allow(subject).to receive(:mtime_including_imports).and_return(Time.now)
+      end
 
       it 'produces CSS from LESS' do
         write_stub_less_file('yes/a.less')
-        guard.run(['yes/a.less'])
+        subject.run(['yes/a.less'])
         expect(File.read('yes/a.css')).to match(/color: #4D926F;/i)
       end
 
       it 'produces CSS in same nested directory hierarchy as LESS' do
         path = 'yes/we/can/have/nested/directories/a.less'
         write_stub_less_file(path)
-        guard.run([path])
+        subject.run([path])
         expect(File).to exist('yes/we/can/have/nested/directories/a.css')
       end
 
       it 'includes directory of currently processing file in Less parser import paths' do
         expect(::Less::Parser).to receive(:new).with(paths: ['yes'], filename: 'yes/a.less')
-        guard.run(['yes/a.less'])
+        subject.run(['yes/a.less'])
       end
 
       context 'using :import_paths option' do
-        let(:guard) do
-          Guard::Less.new(watchers: [watcher], import_paths: ['lib/styles'])
-        end
+        let(:options) { { watchers: [watcher], import_paths: ['lib/styles']} }
 
         it 'also includes specified import paths for Less parser' do
           expect(::Less::Parser).to receive(:new).with(paths: ['yes', 'lib/styles'], filename: 'yes/a.less')
-          guard.run(['yes/a.less'])
+          subject.run(['yes/a.less'])
         end
       end
 
       context 'using :output option with custom directory' do
         let(:watcher) { Guard::Watcher.new(%r{^yes/(.+\.less)$}) }
-        let(:guard) do
-          Guard::Less.new(watchers: [watcher], output: 'public/stylesheets')
-        end
+        let(:options) { { watchers: [watcher], output: 'public/stylesheets' } }
 
         it 'creates directories as needed to match source hierarchy' do
           path = 'yes/we/can/have/nested/directories/a.less'
           write_stub_less_file(path)
-          guard.run([path])
+          subject.run([path])
           expect(File).to exist('public/stylesheets/we/can/have/nested/directories/a.css')
         end
       end
     end
-
   end
 
   private
-
-  def stub_compilation_needed
-    allow(guard).to receive(:mtime).and_return(Time.now - 1)
-    allow(guard).to receive(:mtime_including_imports).and_return(Time.now)
-  end
 
   def write_stub_less_file(path, import=false)
     FileUtils.mkdir_p(File.dirname(path))
@@ -257,7 +225,6 @@ RSpec.describe Guard::Less do
   color: @color;
 }
 LESS
-
       out << '@import "b";' if import
     end
   end
