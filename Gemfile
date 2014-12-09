@@ -5,16 +5,17 @@ gemspec
 gem 'rake'
 
 group :development do
-  gem 'ruby_gntp'
-  gem 'guard-rspec'
+  gem 'ruby_gntp', require: false
+  gem 'guard-rspec', require: false
+  gem 'guard-rubocop', require: false
 end
 
 # The test group will be
 # installed on Travis CI
 #
 group :test do
-  gem 'rspec'
-  gem 'fakefs'
+  gem 'rspec', '~> 3.1', require: false
+  gem 'fakefs', require: false
   gem 'coveralls', require: false
 end
 
