@@ -1,10 +1,16 @@
 require "guard/less"
 
+require 'fakefs/spec_helpers'
+
 RSpec.describe Guard::Less do
   include FakeFS::SpecHelpers
 
   let(:guard) { Guard::Less.new }
   let(:watcher) { Guard::Watcher.new(%r{^yes/.+\.less$}) }
+
+  before do
+    allow(Guard::UI).to receive(:info)
+  end
 
   describe '#initialize' do
     context 'when no options are provided' do
