@@ -6,9 +6,6 @@ module Guard
   class Less < Plugin
     require 'guard/less/version'
 
-    # ================
-    # = Guard method =
-    # ================
     def initialize(options = {})
       defaults = {
         all_after_change: true,
@@ -16,9 +13,9 @@ module Guard
         output: nil,
         import_paths: [],
         compress: false,
+        patterns: [],
         yuicompress: false
       }
-
       super(defaults.merge(options))
     end
 
@@ -92,8 +89,8 @@ module Guard
     def nested_directory_map(paths)
       directories = {}
 
-      watchers.product(paths).each do |watcher, path|
-        next unless (matches = path.match(watcher.pattern))
+      options[:patterns].product(paths).each do |pattern, path|
+        next unless (matches = path.match(pattern))
 
         target = options[:output] || File.dirname(path)
         if (subpath = matches[1])

@@ -3,10 +3,9 @@ require 'guard/less'
 RSpec.describe Guard::Less do
   include FakeFS::SpecHelpers
 
-  let(:options) { {} }
+  let(:pattern) { /^yes\/.+\.less$/ }
+  let(:options) { { patterns: [pattern] } }
   subject { described_class.new(options) }
-
-  let(:watcher) { Guard::Watcher.new(/^yes\/.+\.less$/) }
 
   before do
     allow(Guard::UI).to receive(:info)
@@ -17,11 +16,13 @@ RSpec.describe Guard::Less do
       subject { described_class.new(options).options }
 
       context 'when none provided' do
+        let(:options) { {} }
         it { is_expected.to include(all_after_change: true) }
         it { is_expected.to include(all_on_start: true) }
         it { is_expected.to include(output: nil) }
         it { is_expected.to include(import_paths: []) }
         it { is_expected.to include(compress: false) }
+        it { is_expected.to include(patterns: []) }
       end
 
       context 'when provided' do
@@ -31,6 +32,7 @@ RSpec.describe Guard::Less do
             all_on_start: false,
             output: 'public/stylesheets',
             import_paths: ['lib/styles'],
+            patterns: [/^yes\/(.+)\.less$/],
             compress: true
           }
         end
@@ -40,6 +42,7 @@ RSpec.describe Guard::Less do
         it { is_expected.to include(all_on_start: false) }
         it { is_expected.to include(output: 'public/stylesheets') }
         it { is_expected.to include(import_paths: ['lib/styles']) }
+        it { is_expected.to include(patterns: [/^yes\/(.+)\.less$/]) }
       end
     end
   end
@@ -52,30 +55,30 @@ RSpec.describe Guard::Less do
   end
 
   describe '.run_all' do
-    let(:watcher) { Guard::Watcher.new(/^yes\/(.+)\.less$/) }
-    let(:options) { { watchers: [watcher] } }
+    let(:options) { { patterns: [/^yes\/.+\.less$/] } }
 
     before do
       allow(Dir).to receive(:glob).and_return ['yes/a.less', 'yes/b.less', 'no/c.less']
     end
 
     it 'executes .run passing all watched LESS files' do
+      allow(Guard::Watcher).to receive(:match_files).and_return(['yes/a.less', 'yes/b.less'])
       expect(subject).to receive(:run).with(['yes/a.less', 'yes/b.less'])
       subject.run_all
     end
 
-    it 'executes .run passing all watched LESS files while observing actions provided' do
-      watcher.action = ->(m) { "yep/#{m[1]}.less" }
-      guard = Guard::Less.new(watchers: [watcher])
-      expect(guard).to receive(:run).with(['yep/a.less', 'yep/b.less'])
-      guard.run_all
+    context 'with a subpath' do
+      it 'executes .run passing all watched LESS files while observing actions provided' do
+        allow(Guard::Watcher).to receive(:match_files).and_return(['yep/a.less', 'yep/b.less'])
+        expect(subject).to receive(:run).with(['yep/a.less', 'yep/b.less'])
+        subject.run_all
+      end
     end
 
     it 'executes .run only once per path' do
-      watcher.action = ->(_m) { 'base.less' }
-      guard = Guard::Less.new(watchers: [watcher])
-      expect(guard).to receive(:run).with(['base.less'])
-      guard.run_all
+      allow(Guard::Watcher).to receive(:match_files).and_return(['base.less'])
+      expect(subject).to receive(:run).with(['base.less'])
+      subject.run_all
     end
   end
 
@@ -99,15 +102,13 @@ RSpec.describe Guard::Less do
   end
 
   describe 'run' do
-    let(:options) { { watchers: [watcher] } }
-
     it 'does not compile otherwise matching _partials' do
       expect(subject).not_to receive(:compile)
       subject.run(['yes/_partial.less'])
     end
 
     context 'if watcher misconfigured to match CSS' do
-      let(:options) { { watchers: [Guard::Watcher.new(/^yes\/.+\.css$/)], output: nil } }
+      let(:options) { { patterns: [/^yes\/.+\.css$/], output: nil } }
 
       it 'does not overwrite CSS' do
         expect(subject).not_to receive(:compile)
@@ -191,7 +192,7 @@ RSpec.describe Guard::Less do
       end
 
       context 'using :import_paths option' do
-        let(:options) { { watchers: [watcher], import_paths: ['lib/styles'] } }
+        let(:options) { { patterns: [pattern], import_paths: ['lib/styles'] } }
 
         it 'also includes specified import paths for Less parser' do
           expect(::Less::Parser).to receive(:new).with(paths: ['yes', 'lib/styles'], filename: 'yes/a.less')
@@ -200,8 +201,7 @@ RSpec.describe Guard::Less do
       end
 
       context 'using :output option with custom directory' do
-        let(:watcher) { Guard::Watcher.new(/^yes\/(.+\.less)$/) }
-        let(:options) { { watchers: [watcher], output: 'public/stylesheets' } }
+        let(:options) { { output: 'public/stylesheets', patterns: [/^yes\/(.+\.less)$/] } }
 
         it 'creates directories as needed to match source hierarchy' do
           path = 'yes/we/can/have/nested/directories/a.less'
