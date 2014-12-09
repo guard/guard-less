@@ -1,17 +1,31 @@
-if ENV['CI']
-  require 'coveralls'
-  Coveralls.wear!
-end
-
-require 'guard/less'
-require 'rspec'
 require 'fakefs/spec_helpers'
 
-ENV['GUARD_ENV'] = 'test'
-
 RSpec.configure do |config|
-  config.color_enabled = true
-  config.filter_run focus: true
+  config.expect_with :rspec do |expectations|
+    # TODO: restore
+    # expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  config.mock_with :rspec do |mocks|
+    # TODO: restore
+    # mocks.verify_partial_doubles = true
+  end
+
+  config.filter_run :focus
   config.run_all_when_everything_filtered = true
-  config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  # TODO: restore
+  # config.disable_monkey_patching!
+
+  config.warnings = true
+
+  if config.files_to_run.one?
+    config.default_formatter = 'doc'
+  end
+
+  # config.profile_examples = 10
+
+  config.order = :random
+
+  Kernel.srand config.seed
 end

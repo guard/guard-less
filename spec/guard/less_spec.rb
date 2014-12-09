@@ -1,6 +1,6 @@
-require 'spec_helper'
+require "guard/less"
 
-describe Guard::Less do
+RSpec.describe Guard::Less do
   include FakeFS::SpecHelpers
 
   let(:guard) { Guard::Less.new }
@@ -154,7 +154,7 @@ describe Guard::Less do
 
       context 'but LESS file has an import more recently modified than CSS' do
         before do
-          write_stub_less_file('yes/a.less', import=true)
+          write_stub_less_file('yes/a.less', true)
           # touch with :mtime option doesn't seem to work?
           FileUtils.touch(['yes/a.css', 'yes/b.less'])
           File.utime(Time.now - 5, Time.now - 5, 'yes/a.less')
