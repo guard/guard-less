@@ -13,8 +13,7 @@ end
 # installed on Travis CI
 #
 group :test do
-  # gem 'rspec', '~> 3.1', require: false
-  gem 'rspec', '~> 2.99', require: false
+  gem 'rspec', '~> 3.1', require: false
   gem 'fakefs', require: false
   gem 'coveralls', require: false
 end
