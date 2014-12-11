@@ -19,5 +19,5 @@ less_options = {
 }
 
 guard :less, less_options do
-  patterns.each { |pattern| watch(pattern) }
+  less_options[:patterns].each { |pattern| watch(pattern) }
 end

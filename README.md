@@ -32,8 +32,15 @@ Please read [Guard usage doc](https://github.com/guard/guard#readme).
 ## Guardfile
 
 ```ruby
-guard :less, all_on_start: true, all_after_change: true do
-  watch %r{^.*\.less$}
+less_options = {
+  all_on_start: true,
+  all_after_change: true,
+  patterns: [/^.+\.less$/],
+  output: 'public/stylesheets'
+}
+
+guard :less, less_options do
+  less_options[:patterns].each { |pattern| watch(pattern) }
 end
 ```
 
@@ -61,19 +68,29 @@ import_paths: ['lib/styles']     # an array of additional load paths to pass to 
 compress: true                   # minify output
 
 yuicompress: true                # minify output using yui
+
+patterns: []                     # array of patterns for matching watched/processed files
 ```
 
 ### Output option
 
 By default, `.css` files will be generated in the same directories as their
 corresponding `.less` files (partials beginning with `_` are always excluded).
+
 To customize the output location, pass the `:output` option as described above,
 and be sure to use a match group in the regular expression in your watch to
 capture nested structure that will be preserved, i.e.
 
 ```ruby
-guard :less, output: 'public/stylesheets' do
-  watch %r{^app/stylesheets/(.+\.less)$}
+less_options = {
+  all_on_start: true,
+  all_after_change: true,
+  patterns: [/^app/stylesheets/(.+\.less)$/],
+  output: 'public/stylesheets'
+}
+
+guard :less, less_options do
+  less_options[:patterns].each { |pattern| watch(pattern) }
 end
 ```
 
