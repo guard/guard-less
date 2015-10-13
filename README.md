@@ -1,11 +1,11 @@
 # Guard::Less
 
-[![Gem Version](https://badge.fury.io/rb/guard-less.png)](http://badge.fury.io/rb/guard-less) [![Build Status](https://travis-ci.org/guard/guard-less.png?branch=master)](https://travis-ci.org/guard/guard-less) [![Dependency Status](https://gemnasium.com/guard/guard-less.png)](https://gemnasium.com/guard/guard-less) [![Code Climate](https://codeclimate.com/github/guard/guard-less.png)](https://codeclimate.com/github/guard/guard-less) [![Coverage Status](https://coveralls.io/repos/guard/guard-less/badge.png?branch=master)](https://coveralls.io/r/guard/guard-less)
+[![Gem Version](https://badge.fury.io/rb/guard-less.png)](http://badge.fury.io/rb/guard-less) [![Build Status](https://travis-ci.org/guard/guard-less.png?branch=master)](https://travis-ci.org/guard/guard-less) [![Dependency Status](https://gemnasium.com/guard/guard-less.png)](https://gemnasium.com/guard/guard-less) [![Code Climate](https://codeclimate.com/github/guard/guard-less.png)](https://codeclimate.com/github/guard/guard-less) [![Test Coverage](https://codeclimate.com/github/guard/guard-less/badges/coverage.svg)](https://codeclimate.com/github/guard/guard-less)
 
 A guard extension that compiles `.less` files to `.css` files when changed.
 
 * Compatible with Less ~> 2.3.
-* Tested against Ruby 1.9.3, 2.0.0, Rubinius & JRuby (1.9 mode only).
+* Tested against Ruby 2.0, 2.1, 2.2, Rubinius & JRuby (1.9 mode only).
 
 ## Install
 
